@@ -1,13 +1,26 @@
 import "dotenv/config";
 import express, { type Application } from "express";
-import cors from "cors";
 import { appConfig } from "./config/app.config";
-
-console.log(appConfig);
+import cookieParser from "cookie-parser";
+import cors from "cors";
+import { connectToDatabase } from "./database/db";
 
 const app: Application = express();
+const PORT = appConfig.PORT || 3000;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
+app.use(
+  cors({
+    origin: appConfig.APP_ORIGIN,
+    credentials: true,
+  }),
+);
+
+app.listen(PORT, async () => {
+  await connectToDatabase();
+  console.log(`Server is running in env ${appConfig.NODE_ENV} on port ${PORT}`);
+});
 
 export default app;

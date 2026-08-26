@@ -8,6 +8,7 @@ export const appConfigSchema = z.object({
   JWT_EXPIRES_IN: z.string().default("1h"),
   JWT_REFRESH_EXPIRES_IN: z.string().default("7d"),
   JWT_REFRESH_SECRET: z.string(),
+  MONGODB_URI: z.url(),
 });
 
 const parsedConfig = appConfigSchema.safeParse(process.env);
