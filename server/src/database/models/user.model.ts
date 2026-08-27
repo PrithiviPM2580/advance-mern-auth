@@ -19,11 +19,16 @@ export interface UserDocument extends Document {
   comparePassword(candidatePassword: string): Promise<boolean>;
 }
 
-const userPreferencesSchema = new Schema<UserPreferences>({
-  enable2FA: { type: Boolean, default: false },
-  emailNotification: { type: Boolean, default: true },
-  twoFactorSecret: { type: String, required: false, select: false },
-});
+const userPreferencesSchema = new Schema<UserPreferences>(
+  {
+    enable2FA: { type: Boolean, default: false },
+    emailNotification: { type: Boolean, default: true },
+    twoFactorSecret: { type: String, required: false },
+  },
+  {
+    _id: false,
+  },
+);
 
 const userSchema = new Schema<UserDocument>(
   {
@@ -35,7 +40,7 @@ const userSchema = new Schema<UserDocument>(
       lowercase: true,
       trim: true,
     },
-    password: { type: String, required: true, trim: true, select: false },
+    password: { type: String, required: true, trim: true },
     isEmailVerified: { type: Boolean, default: false },
     userPreference: { type: userPreferencesSchema, default: () => ({}) },
   },
@@ -43,6 +48,16 @@ const userSchema = new Schema<UserDocument>(
     timestamps: true,
   },
 );
+
+userSchema.set("toJSON", {
+  transform(doc, ret) {
+    delete (ret as any).__v;
+    delete (ret as any).password;
+    delete (ret as any).userPreference?.twoFactorSecret;
+
+    return ret;
+  },
+});
 
 userSchema.pre<UserDocument>("save", async function () {
   if (!this.isModified("password")) return;
