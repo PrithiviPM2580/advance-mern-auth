@@ -6,6 +6,7 @@ import authRoute from "./modules/auth.route";
 import cookieParser from "cookie-parser";
 import morgan from "morgan";
 import cors from "cors";
+import { errorHandler } from "./middlewares/error-handler";
 
 const app: Application = express();
 const PORT = appConfig.PORT || 3000;
@@ -22,6 +23,14 @@ app.use(
 );
 
 app.use(`${appConfig.BASE_PATH}/auth`, authRoute);
+
+app.use((req, res, next) => {
+  res.status(404).json({
+    message: "Route not found",
+  });
+});
+
+app.use(errorHandler);
 
 app.listen(PORT, async () => {
   await connectToDatabase();
