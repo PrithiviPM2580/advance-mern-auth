@@ -4,6 +4,7 @@ import { connectToDatabase } from "./database/db";
 import { appConfig } from "./config/app.config";
 import authRoute from "./modules/auth.route";
 import cookieParser from "cookie-parser";
+import morgan from "morgan";
 import cors from "cors";
 
 const app: Application = express();
@@ -12,6 +13,7 @@ const PORT = appConfig.PORT || 3000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+app.use(morgan("dev"));
 app.use(
   cors({
     origin: appConfig.APP_ORIGIN,
