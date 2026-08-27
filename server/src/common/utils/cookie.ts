@@ -1,0 +1,48 @@
+import type { CookieOptions, Response } from "express";
+import type { AuthenticationCookiesPayload } from "../../@types";
+import { appConfig } from "../../config/app.config";
+
+const REFRESH_PATH = `${appConfig.BASE_PATH}/auth/refresh`;
+
+const defaultCookieOptions: CookieOptions = {
+  httpOnly: true,
+  secure: appConfig.NODE_ENV === "production",
+  sameSite: appConfig.NODE_ENV === "production" ? "strict" : "lax",
+};
+
+const getAccessTokenCookieOptions = (): CookieOptions => ({
+  ...defaultCookieOptions,
+  maxAge: appConfig.JWT_ACCESS_EXPIRES_IN * 1000,
+  path: "/",
+});
+
+const getRefreshTokenCookieOptions = (): CookieOptions => ({
+  ...defaultCookieOptions,
+  maxAge: appConfig.JWT_REFRESH_EXPIRES_IN * 1000,
+  path: REFRESH_PATH,
+});
+
+export const setAuthenticationCookies = ({
+  res,
+  accessToken,
+  refreshToken,
+}: AuthenticationCookiesPayload): Response => {
+  res.cookie("accessToken", accessToken, getAccessTokenCookieOptions());
+  res.cookie("refreshToken", refreshToken, getRefreshTokenCookieOptions());
+
+  return res;
+};
+
+export const clearAuthenticationCookies = (res: Response): Response => {
+  res.clearCookie("accessToken", {
+    ...defaultCookieOptions,
+    path: "/",
+  });
+
+  res.clearCookie("refreshToken", {
+    ...defaultCookieOptions,
+    path: REFRESH_PATH,
+  });
+
+  return res;
+};
