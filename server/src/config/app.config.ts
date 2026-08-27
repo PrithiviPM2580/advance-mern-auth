@@ -3,6 +3,7 @@ import { z } from "zod";
 export const appConfigSchema = z.object({
   PORT: z.coerce.number().int().positive().default(3000),
   NODE_ENV: z.enum(["development", "production"]).default("development"),
+  BASE_PATH: z.string().default("/api/v1"),
   APP_ORIGIN: z.url().default("http://localhost:3000"),
   JWT_SECRET: z.string(),
   JWT_EXPIRES_IN: z.string().default("1h"),

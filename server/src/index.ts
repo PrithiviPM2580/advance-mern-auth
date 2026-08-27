@@ -1,9 +1,10 @@
 import "dotenv/config";
 import express, { type Application } from "express";
+import { connectToDatabase } from "./database/db";
 import { appConfig } from "./config/app.config";
+import authRoute from "./modules/auth.route";
 import cookieParser from "cookie-parser";
 import cors from "cors";
-import { connectToDatabase } from "./database/db";
 
 const app: Application = express();
 const PORT = appConfig.PORT || 3000;
@@ -17,6 +18,8 @@ app.use(
     credentials: true,
   }),
 );
+
+app.use(`${appConfig.BASE_PATH}/auth`, authRoute);
 
 app.listen(PORT, async () => {
   await connectToDatabase();
