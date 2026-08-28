@@ -18,6 +18,7 @@ import {
   verifyRefreshToken,
 } from "../common/utils/jwt";
 import { appConfig } from "../config/app.config";
+import { validate } from "uuid";
 
 export class AuthService {
   public async register(registerData: RegisterDTO) {
@@ -129,6 +130,39 @@ export class AuthService {
     return {
       accessToken,
       newRefreshToken,
+    };
+  }
+
+  public async verifyEmail(code: string) {
+    const validCode = await VerificationModel.findOne({
+      code,
+      type: VerificationEnum.EMAIL_VERIFICATION,
+      expiresAt: { $gt: new Date() },
+    });
+
+    if (!validCode) {
+      throw new BadRequestException("Invalid or expired verification");
+    }
+
+    const updateUser = await UserModel.findByIdAndUpdate(
+      validCode.userId,
+      {
+        isEmailVerified: true,
+      },
+      { new: true },
+    );
+
+    if (!updateUser) {
+      throw new BadRequestException(
+        "Unable to verify email address",
+        ErrorCode.VALIDATION_ERROR,
+      );
+    }
+
+    await validCode.deleteOne();
+
+    return {
+      user: updateUser,
     };
   }
 }

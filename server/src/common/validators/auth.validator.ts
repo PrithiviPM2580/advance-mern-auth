@@ -35,5 +35,14 @@ export const refreshPayloadSchema = z.object({
   sessionId: objectIdSchema,
 });
 
+export const verificationEmailSchema = z.object({
+  code: z.string().trim().min(1).max(255),
+});
+
+export const resetPasswordSchema = z.object({
+  password: z.string().min(6, "Password must be at least 6 characters long"),
+  verificationCode: z.string().trim().min(1).max(255),
+});
+
 export type AccessTPayload = z.infer<typeof accessPayloadSchema>;
 export type RefreshTPayload = z.infer<typeof refreshPayloadSchema>;

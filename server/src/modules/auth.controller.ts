@@ -5,6 +5,7 @@ import { HTTP_STATUS } from "../config/http.config";
 import {
   loginSchema,
   registerSchema,
+  verificationEmailSchema,
 } from "../common/validators/auth.validator";
 import {
   getAccessTokenCookieOptions,
@@ -88,6 +89,18 @@ export class AuthController {
         .json({
           message: "Refresh access token successfully",
         });
+    },
+  );
+
+  public verifyEmail = asyncHandler(
+    async (req: Request, res: Response, next: NextFunction) => {
+      const { code } = verificationEmailSchema.parse(req.body);
+
+      await this.authService.verifyEmail(code);
+
+      return res.status(HTTP_STATUS.OK).json({
+        message: "Email verified successfully",
+      });
     },
   );
 }
