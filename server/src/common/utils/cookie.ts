@@ -10,13 +10,13 @@ const defaultCookieOptions: CookieOptions = {
   sameSite: appConfig.NODE_ENV === "production" ? "strict" : "lax",
 };
 
-const getAccessTokenCookieOptions = (): CookieOptions => ({
+export const getAccessTokenCookieOptions = (): CookieOptions => ({
   ...defaultCookieOptions,
   maxAge: appConfig.JWT_ACCESS_EXPIRES_IN * 1000,
   path: "/",
 });
 
-const getRefreshTokenCookieOptions = (): CookieOptions => ({
+export const getRefreshTokenCookieOptions = (): CookieOptions => ({
   ...defaultCookieOptions,
   maxAge: appConfig.JWT_REFRESH_EXPIRES_IN * 1000,
   path: REFRESH_PATH,
