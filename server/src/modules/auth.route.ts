@@ -9,4 +9,6 @@ authRoute.route("/login").post(authController.login);
 
 authRoute.route("/refresh").get(authController.refreshToken);
 
+authRoute.route("/verify/email").post(authController.verifyEmail);
+
 export default authRoute;

@@ -24,4 +24,13 @@ Content-Type: application/json
 ### Refresh Token
 
 GET {{BASE_URL}}/auth/refresh
-Cookie: refreshToken= 
+Cookie: refreshToken= {{REFRESH_TOKEN}}
+
+### Verify Email
+
+POST {{BASE_URL}}/auth/verify/email
+Content-Type: application/json
+
+{
+    "code":"4695af07910f496a9743a484d"
+}
