@@ -7,6 +7,7 @@ import {
   registerSchema,
 } from "../common/validators/auth.validator";
 import { setAuthenticationCookies } from "../common/utils/cookie";
+import { UnauthorizedException } from "../common/utils/catch-errors";
 
 export class AuthController {
   private authService: AuthService;
@@ -55,6 +56,18 @@ export class AuthController {
             mfaRequired,
           },
         });
+    },
+  );
+
+  public refreshToken = asyncHandler(
+    async (req: Request, res: Response, next: NextFunction) => {
+      const refreshToken = req.cookies.refreshToken;
+
+      if (!refreshToken) {
+        throw new UnauthorizedException("User not authorized");
+      }
+
+      await this.authService.refreshToken(refreshToken);
     },
   );
 }

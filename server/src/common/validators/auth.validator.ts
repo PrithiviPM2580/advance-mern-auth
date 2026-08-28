@@ -1,3 +1,4 @@
+import { Types } from "mongoose";
 import { z } from "zod";
 
 export const registerSchema = z
@@ -18,7 +19,21 @@ export const loginSchema = z.object({
   userAgent: z.string().optional(),
 });
 
-export const payloadSchema = z.object({
-  userId: z.string().optional(),
-  sessionId: z.string().optional(),
+const objectIdSchema = z
+  .string()
+  .refine((value) => Types.ObjectId.isValid(value), {
+    message: "Invalid ObjectId",
+  })
+  .transform((value) => new Types.ObjectId(value));
+
+export const accessPayloadSchema = z.object({
+  userId: objectIdSchema,
+  sessionId: objectIdSchema,
 });
+
+export const refreshPayloadSchema = z.object({
+  sessionId: objectIdSchema,
+});
+
+export type AccessTPayload = z.infer<typeof accessPayloadSchema>;
+export type RefreshTPayload = z.infer<typeof refreshPayloadSchema>;
