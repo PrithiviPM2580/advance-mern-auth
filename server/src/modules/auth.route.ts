@@ -7,6 +7,6 @@ authRoute.route("/register").post(authController.register);
 
 authRoute.route("/login").post(authController.login);
 
-authRoute.route("/refresh").post(authController.refreshToken);
+authRoute.route("/refresh").get(authController.refreshToken);
 
 export default authRoute;
